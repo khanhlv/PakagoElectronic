@@ -21,20 +21,20 @@ public class Application {
 
     @OnClose
     public void onClose(Session session) {
-        System.out.println(String.format("Ng\u1EAFt k\u1EBFt n\u1ED1i [%s]", session.getId()));
+        System.out.println(String.format("Ngat ket noi [%s]", session.getId()));
         isDisconnect = true;
-        System.out.print("\u0110ang k\u1EBFt n\u1ED1i");
+        System.out.print("Dang ket noi");
     }
 
     @OnOpen
     public void onOpen(Session session) {
         isDisconnect = false;
-        System.out.println(String.format("\nM\u1EDF k\u1EBFt n\u1ED1i [%s]", session.getId()));
+        System.out.println(String.format("\nMo ket noi [%s]", session.getId()));
     }
 
     @OnMessage
     public void onMessage(String message) {
-        LOGGER.info(String.format("Th\u00F4ng tin t\u1EEB c\u00E2n \u0111i\u1EC7n t\u1EED [%s]", message));
+        LOGGER.info(String.format("Thong tin tu can dien tu [%s]", message));
         linkedQueue.add(message);
     }
 
@@ -43,7 +43,7 @@ public class Application {
 
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         Session session = null;
-        System.out.print("\u0110ang k\u1EBFt n\u1ED1i");
+        System.out.print("Dang ket noi");
 
         while (true) {
             showConnect(isDisconnect, session);

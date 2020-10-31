@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +25,9 @@ public class ElectronicThread implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("\nK\u1EBFt n\u1ED1i \u0111\u1EBFn h\u1EC7 th\u1ED1ng Pakago");
+        System.out.println("\nKet noi den he thong Pakago");
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         while (true) {
             if (Application.linkedQueue.size() > 0) {
                 String message = Application.linkedQueue.poll();
@@ -33,7 +36,7 @@ public class ElectronicThread implements Runnable {
 
                 if (dataElectronicScale != null && !StringUtils.isAllBlank(dataElectronicScale.getWeight(), dataElectronicScale.getBarcode())) {
                     try {
-                        File file = new File(ResourceUtils.getValue("folderImage") + "\\" + dataElectronicScale.getBarcode() + ".png");
+                        File file = new File(ResourceUtils.getValue("folderImage") + "\\" + simpleDateFormat.format(new Date()) + "\\" + dataElectronicScale.getBarcode() + ".jpg");
 
                         String imageEncode = Base64.encodeBase64String(FileUtils.readFileToByteArray(file));
 
@@ -51,12 +54,12 @@ public class ElectronicThread implements Runnable {
                         double errorCode = (double) mapResult.get("errorCode");
 
                         if (errorCode == -1.0) {
-                            LOGGER.info(String.format("Kh\u00F4ng t\u1ED3n t\u1EA1i m\u00E3 [%s]", dataElectronicScale.getBarcode()));
+                            LOGGER.info(String.format("Khong toi tai ma [%s]", dataElectronicScale.getBarcode()));
                         } else {
-                            LOGGER.info(String.format("C\u1EADp nh\u1EADp th\u00E0nh c\u00F4ng m\u00E3 [%s]", dataElectronicScale.getBarcode()));
+                            LOGGER.info(String.format("Cap nhap thanh cong ma [%s]", dataElectronicScale.getBarcode()));
                         }
                     } catch (Exception ex) {
-                        LOGGER.info("Kh\u00F4ng k\u1EBFt n\u1ED1i \u0111\u01B0\u1EE3c v\u1EDBi h\u1EC7 th\u1ED1ng Pakago");
+                        LOGGER.info("Khong ket noi duoc voi he thong Pakago");
                     }
                 }
             }
