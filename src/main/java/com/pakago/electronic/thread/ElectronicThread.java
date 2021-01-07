@@ -25,7 +25,7 @@ public class ElectronicThread implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("\nKet noi den he thong Pakago");
+        System.out.println("\nKet noi den he thong");
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         while (true) {
@@ -47,7 +47,9 @@ public class ElectronicThread implements Runnable {
                         dataPost.put("id" , dataElectronicScale.getBarcode());
                         dataPost.put("weight" , dataElectronicScale.getWeight());
 
+                        LOGGER.debug("REQUEST [{}]", new Gson().toJson(dataPost));
                         String data = post(ResourceUtils.getValue("serviceApi"), new Gson().toJson(dataPost));
+                        LOGGER.debug("RESPONSE [{}]", data);
 
                         Map<String, Object> mapResult = new Gson().fromJson(data, Map.class);
 
@@ -59,7 +61,7 @@ public class ElectronicThread implements Runnable {
                             LOGGER.info(String.format("Cap nhap thanh cong ma [%s]", dataElectronicScale.getBarcode()));
                         }
                     } catch (Exception ex) {
-                        LOGGER.info("Khong ket noi duoc voi he thong Pakago");
+                        LOGGER.error("Khong ket noi duoc voi he thong", ex);
                     }
                 }
             }
