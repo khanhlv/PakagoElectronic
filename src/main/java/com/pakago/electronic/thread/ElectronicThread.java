@@ -36,37 +36,44 @@ public class ElectronicThread implements Runnable {
 
                 if (dataElectronicScale != null && !StringUtils.isAllBlank(dataElectronicScale.getWeight(), dataElectronicScale.getBarcode())) {
                     try {
-                        File file = new File(ResourceUtils.getValue("folderImage") + "\\" + simpleDateFormat.format(new Date()) + "\\" + dataElectronicScale.getBarcode() + ".jpg");
+                        String path = ResourceUtils.getValue("folderImage") + "\\" + simpleDateFormat.format(new Date()) + "\\" + dataElectronicScale.getBarcode() + ".jpg";
 
-                        String imageEncode = Base64.encodeBase64String(FileUtils.readFileToByteArray(file));
+                        File file = new File(path);
 
-                        dataElectronicScale.setImage(imageEncode);
+                        if (file.exists()) {
+                            String imageEncode = Base64.encodeBase64String(FileUtils.readFileToByteArray(file));
 
-                        Map<String, String> dataPost = new HashMap<>();
-                        dataPost.put("image", dataElectronicScale.getImage());
-                        dataPost.put("id" , dataElectronicScale.getBarcode());
-                        dataPost.put("weight" , dataElectronicScale.getWeight());
+                            dataElectronicScale.setImage(imageEncode);
 
-                        LOGGER.debug("REQUEST [{}]", new Gson().toJson(dataPost));
-                        String data = post(ResourceUtils.getValue("serviceApi"), new Gson().toJson(dataPost));
-                        LOGGER.debug("RESPONSE [{}]", data);
+                            Map<String, String> dataPost = new HashMap<>();
+                            dataPost.put("image", dataElectronicScale.getImage());
+                            dataPost.put("id" , dataElectronicScale.getBarcode());
+                            dataPost.put("weight" , dataElectronicScale.getWeight());
 
-                        Map<String, Object> mapResult = new Gson().fromJson(data, Map.class);
+                            LOGGER.debug("REQUEST [{}]", new Gson().toJson(dataPost));
+                            String data = post(ResourceUtils.getValue("serviceApi"), new Gson().toJson(dataPost));
+                            LOGGER.debug("RESPONSE [{}]", data);
 
-                        double errorCode = (double) mapResult.get("errorCode");
+                            Map<String, Object> mapResult = new Gson().fromJson(data, Map.class);
 
-                        if (errorCode == -1.0) {
-                            LOGGER.info(String.format("Khong toi tai ma [%s]", dataElectronicScale.getBarcode()));
+                            double errorCode = (double) mapResult.get("errorCode");
+
+                            if (errorCode == -1.0) {
+                                LOGGER.info(String.format("Khong toi tai ma [%s]", dataElectronicScale.getBarcode()));
+                            } else {
+                                LOGGER.info(String.format("Cap nhap thanh cong ma [%s]", dataElectronicScale.getBarcode()));
+                            }
                         } else {
-                            LOGGER.info(String.format("Cap nhap thanh cong ma [%s]", dataElectronicScale.getBarcode()));
+                            LOGGER.error("Khong tim thay anh {}", path);
                         }
+
                     } catch (Exception ex) {
                         LOGGER.error("Khong ket noi duoc voi he thong", ex);
                     }
                 }
             }
             try {
-                Thread.sleep(200);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
             }
         }
